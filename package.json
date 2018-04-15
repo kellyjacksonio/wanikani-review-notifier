@@ -1,0 +1,25 @@
+{
+  "name": "wanikani-review-notifier",
+  "version": "1.0.0",
+  "description": "Informs you via either SMS text or email when your Wanikani Reviews are ready",
+  "main": "routes.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node routes.js"
+  },
+  "keywords": [
+    "wanikani",
+    "review",
+    "notification",
+    "japanese",
+    "learn"
+  ],
+  "author": "kellyjacksonio",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "ejs": "^2.5.8",
+    "express": "^4.16.3",
+    "request": "^2.85.0"
+  }
+}
