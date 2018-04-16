@@ -1,6 +1,6 @@
 const   request     = require('request'),
         mongoose    = require('mongoose'),
-        Review      = require('./models/review'),
+        Review      = require('./models/Review'),
         config      = require('./config.js'),
         client      = require('twilio')(config.accountSid, config.authToken);
 
@@ -56,11 +56,11 @@ var requestLoop = setInterval(function(){
                 var review = new Review({numberOfReviews: numberOfReviews, now: now});
                 review.save(function (err, storedReview) { // store numberOfReviews to review object
                     if(err) return console.error(err);
-                    console.log('New stored review', storedReview);                    
+                    console.log('New stored review', storedReview.numberOfReviews);                    
                 });
             });
         }
     });
-}, 10000); // change to 60000 at some point
+}, 60000);
 
 exports.module = requestLoop;
