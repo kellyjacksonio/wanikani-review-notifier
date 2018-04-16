@@ -6,8 +6,6 @@ const   request     = require('request'),
 
 // If on vacation mode, next_review_date === NULL
 
-mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
-
 var requestLoop = setInterval(function(){
     request(`https://www.wanikani.com/api/user/${config.myWKApiKey}/study-queue`, (err, res, body) => {
         var parsedBody = JSON.parse(body);
@@ -25,6 +23,8 @@ var requestLoop = setInterval(function(){
             console.log('Minutes until review:', timeUntilReview / 60);
             console.log('Number of reviews:', numberOfReviews);
             
+            mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
+            // is this a good place to connect to mongoose ^? 
             // determining whether to send notification logic
             Review.find(function(err, dbReview) {
                 var storedReview = dbReview[0].numberOfReviews;
@@ -61,4 +61,6 @@ var requestLoop = setInterval(function(){
             });
         }
     });
-}, 1000);
+}, 10000);
+
+exports.module = requestLoop;
