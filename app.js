@@ -20,7 +20,7 @@ var requestLoop = setInterval(function(){
             console.log('Your username:', username);
             console.log('Next review date:', nextReviewDate);
             console.log('Now:', now);
-            console.log('Minutes until review:', timeUntilReview / 60);
+            console.log('Minutes until review:', Math.floor(timeUntilReview / 60));
             console.log('Number of reviews:', numberOfReviews);
             
             mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
@@ -61,6 +61,6 @@ var requestLoop = setInterval(function(){
             });
         }
     });
-}, 10000);
+}, 10000); // change to 60000 at some point
 
 exports.module = requestLoop;
