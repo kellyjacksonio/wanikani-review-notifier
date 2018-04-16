@@ -1,17 +1,15 @@
-var request     = require('request'),
-    mongoose    = require('mongoose'),
-    Review      = require('./models/review'),
-    config      = require('./config.js');
+const   request     = require('request'),
+        mongoose    = require('mongoose'),
+        Review      = require('./models/review'),
+        config      = require('./config.js'),
+        client      = require('twilio')(config.accountSid, config.authToken);
 
-// database - mongodb://<dbuser>:<dbpassword>@ds135800.mlab.com:35800/wanikani-review-notifier
-// my API - https://www.wanikani.com/api/user/dafbfe09d39c7662e5274524b0c05604/study-queue
-// geena's API - https://www.wanikani.com/api/user/3dbf079d24812d364c5f2390ce9db4ca/study-queue
 // If on vacation mode, next_review_date === NULL
 
 mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
 
 var requestLoop = setInterval(function(){
-    request('https://www.wanikani.com/api/user/dafbfe09d39c7662e5274524b0c05604/study-queue', (err, res, body) => {
+    request(`https://www.wanikani.com/api/user/${config.myWKApiKey}/study-queue`, (err, res, body) => {
         var parsedBody = JSON.parse(body);
         var username = parsedBody.user_information.username;
         var nextReviewDate = parsedBody.requested_information.next_review_date; // comes back in seconds
@@ -21,11 +19,11 @@ var requestLoop = setInterval(function(){
         if(err) {
             console.log(err);
         } else {
-            //console.log('Your username:', username);
-            //console.log('Next review date:', nextReviewDate);
-            //console.log('Now:', now);
-            console.log('Minutes until review:', timeUntilReview / 60); // if negative then a review is ready
-            // console.log('Number of reviews:', numberOfReviews);
+            console.log('Your username:', username);
+            console.log('Next review date:', nextReviewDate);
+            console.log('Now:', now);
+            console.log('Minutes until review:', timeUntilReview / 60);
+            console.log('Number of reviews:', numberOfReviews);
             
             // determining whether to send notification logic
             Review.find(function(err, dbReview) {
@@ -37,7 +35,13 @@ var requestLoop = setInterval(function(){
                     console.log('dont send notification');
                 } else if(storedReview < numberOfReviews) {
                     console.log('send notification');
-                    console.log(`you have ${numberOfReviews} number of reviews waiting for you!`);
+                    client.messages
+                      .create({
+                        to: config.myPhoneNumber,
+                        from: config.twilioPhoneNumber,
+                        body: `you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
+                      })
+                      .then(message => console.log(message.sid));
                 } else {
                     console.log('wtf happened');
                 }
@@ -49,7 +53,7 @@ var requestLoop = setInterval(function(){
                         console.log('cleared db');
                     }
                 }); 
-                var review = new Review({numberOfReviews: numberOfReviews, now: now}); // create review object
+                var review = new Review({numberOfReviews: numberOfReviews, now: now});
                 review.save(function (err, storedReview) { // store numberOfReviews to review object
                     if(err) return console.error(err);
                     console.log('New stored review', storedReview);                    
@@ -57,7 +61,4 @@ var requestLoop = setInterval(function(){
             });
         }
     });
-}, 10000);
-
-// if current amount > last amount && timeUntilReview === 0
-// database only has to store the last amount and compare that amount to the current amount
+}, 1000);
