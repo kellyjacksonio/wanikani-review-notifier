@@ -1,66 +1,88 @@
-const   request     = require('request'),
-        mongoose    = require('mongoose'),
-        Review      = require('./models/Review'),
-        config      = require('./config.js'),
-        client      = require('twilio')(config.accountSid, config.authToken);
+const   express         = require('express'),
+        app             = express(),
+        passport        = require('passport'),
+        mongoose        = require('mongoose'),
+        bodyParser      = require('body-parser'),
+        LocalStrategy   = require('passport-local'),
+        config          = require('./config'),
+        requestLoop     = require('./requestLoop'),
+        User            = require('./models/user'),
+        port            = process.env.PORT || 8080;
 
-// If on vacation mode, next_review_date === NULL
+app.use(bodyParser.urlencoded({extended: true}));       
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public/'));
 
-var requestLoop = setInterval(function(){
-    request(`https://www.wanikani.com/api/user/${config.myWKApiKey}/study-queue`, (err, res, body) => {
-        var parsedBody = JSON.parse(body);
-        var username = parsedBody.user_information.username;
-        var nextReviewDate = parsedBody.requested_information.next_review_date; // comes back in seconds
-        var numberOfReviews = parsedBody.requested_information.reviews_available;
-        var now = Math.floor(Date.now() / 1000); // changes to seconds
-        var timeUntilReview = nextReviewDate - now;
+// PASSPORT CONFIGURATION
+app.use(require('express-session')({
+    secret: ':)))))',
+    resave: false,
+    saveOnInitialize: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// MONGOOSE 
+mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
+
+// ROUTES
+app.get('/', (req, res) => {
+    var user = req.user;
+    res.render('home', {user: user});
+});
+
+// AUTH ROUTES
+
+//show register form
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
+// handle sign up logic
+app.post('/register', (req, res) => {
+    var newUser = new User({username: req.body.username, apiKey: req.body.apiKey, phoneNumber: req.body.phoneNumber});
+    User.register(newUser, req.body.password, (err, user) => {
         if(err) {
             console.log(err);
-        } else {
-            console.log('Your username:', username);
-            console.log('Next review date:', nextReviewDate);
-            console.log('Now:', now);
-            console.log('Minutes until review:', Math.floor(timeUntilReview / 60));
-            console.log('Number of reviews:', numberOfReviews);
-            
-            mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
-            // is this a good place to connect to mongoose ^? 
-            // determining whether to send notification logic
-            Review.find(function(err, dbReview) {
-                var storedReview = dbReview[0].numberOfReviews;
-                console.log('Stored review:', storedReview);
-                console.log('Current # of reviews', numberOfReviews);
-                if(err) return console.error(err); // error handling
-                if(storedReview === undefined || storedReview >= numberOfReviews) {
-                    console.log('dont send notification');
-                } else if(storedReview < numberOfReviews) {
-                    console.log('send notification');
-                    client.messages
-                      .create({
-                        to: config.myPhoneNumber,
-                        from: config.twilioPhoneNumber,
-                        body: `you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
-                      })
-                      .then(message => console.log(message.sid));
-                } else {
-                    console.log('wtf happened');
-                }
-                
-                Review.remove({}, function(err) {
-                    if(err) {
-                        console.error(err);
-                    } else {
-                        console.log('cleared db');
-                    }
-                }); 
-                var review = new Review({numberOfReviews: numberOfReviews, now: now});
-                review.save(function (err, storedReview) { // store numberOfReviews to review object
-                    if(err) return console.error(err);
-                    console.log('New stored review', storedReview.numberOfReviews);                    
-                });
-            });
+            return res.render('register');
         }
+        passport.authenticate("local")(req, res, () => {
+            console.log('user created ' + newUser.username);
+            res.redirect('/');
+        });
     });
-}, 60000);
+});
 
-exports.module = requestLoop;
+// show login form
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+// handle login logic
+app.post('/login', passport.authenticate('local', 
+    {
+        successRedirect: '/',
+        failureRedirect: '/login',
+    }), (req, res) => {
+});
+
+// logout route
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
+
+// MIDDLEWARE
+function isLoggedIn(req, res, next) {
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+app.listen(port, () => { // port set for heroku
+    console.log('listening :)');
+});
