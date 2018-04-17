@@ -1,4 +1,10 @@
 <%-  include partials/header %> 
         <h2>Coming soon :)</h2>
         
+        <% if(user) { %> <!-- info only for logged in users -->
+                <p>Welcome <%=user.username%> to the WaniKani Review Notifier</p>
+        <% } else { %> <!-- info only for not logged in users -->
+                    
+        <% } %>
+        
 <%- include partials/footer %>
