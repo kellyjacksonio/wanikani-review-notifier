@@ -110,8 +110,13 @@ app.put('/account', (req, res) => {
 
 // delete account
 app.delete('/account', (req, res) => {
-    // delete account
-    res.send('delete!');
+    User.findOneAndRemove(
+        {username: req.user.username},
+        (err, deletedUser) => {
+            if(err) return console.error(err);
+            console.log('Deleted:', deletedUser.username);
+        }
+    ).then(res.redirect('/'));
 });
 
 // FAQ page
