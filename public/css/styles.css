@@ -1,0 +1,15 @@
+.container {
+    padding: 0 10%;
+}
+
+form {
+    padding: 0 30%;
+}
+
+h1 {
+    text-align: center;
+}
+
+.delete-margin {
+    margin: 25px 0;
+}
