@@ -22,12 +22,16 @@
                         </div>
                         <div class="field">
                                 <label>Phone Number</label>
-                                <input type="text" name="phoneNumber" placeholder="Phone Number" value="<%=user.phoneNumber%>">
+                                <input type="tel" name="phoneNumber" placeholder="Phone Number" value="<%=user.phoneNumber%>">
                         </div>
                         <button class="ui button" type="submit">Update Settings</button>
                 </form>
+                
+                <form action="/account?_method=DELETE" method="POST" class="ui form">
+                        <button class="ui button warning" type="submit">Delete Account</button>
+                </form>
         <% } else { %> <!-- info only for not logged in users -->
-                    
+                <p>Login/Register to start!</p>
         <% } %>
         
 <%- include partials/footer %>
