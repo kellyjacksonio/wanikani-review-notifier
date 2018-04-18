@@ -108,14 +108,15 @@ app.put('/account', (req, res) => {
     ).then(res.redirect('/'));
 });
 
-// FAQ page
-app.get('/faq', (req, res) => {
-    res.send('future faq page');
-});
-
 // delete account
 app.delete('/account', (req, res) => {
     // delete account
+    res.send('delete!');
+});
+
+// FAQ page
+app.get('/faq', (req, res) => {
+    res.send('future faq page');
 });
 
 // MIDDLEWARE
