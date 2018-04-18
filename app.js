@@ -25,6 +25,8 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// make user a global variable
+
 // MONGOOSE 
 mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
 
@@ -38,7 +40,7 @@ app.get('/', (req, res) => {
 
 //show register form
 app.get('/register', (req, res) => {
-    res.render('register');
+    res.render('register', {user: req.user});
 });
 
 // handle sign up logic
@@ -58,7 +60,7 @@ app.post('/register', (req, res) => {
 
 // show login form
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', {user: req.user});
 });
 
 // handle login logic
@@ -73,6 +75,34 @@ app.post('/login', passport.authenticate('local',
 app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');
+});
+
+// ACCOUNT SETTINGS ROUTES
+app.post('/account', (req, res) => {
+    var user = req.user;
+    console.log(user);
+    if(req.body.notification === 'on') { // toggle notification logic
+        // change receiveNotification === true
+        console.log('receive notifications');
+    } else {
+        // change receiveNotification === false
+        console.log('dont receive');
+    }
+    
+    // phone number
+    // email
+    // apiKey
+    res.redirect('/');
+});
+
+// FAQ page
+app.get('/faq', (req, res) => {
+    res.send('future faq page');
+});
+
+// delete account
+app.delete('/account', (req, res) => {
+    // delete account
 });
 
 // MIDDLEWARE
