@@ -20,7 +20,6 @@ var requestLoop = setInterval(function(){
 
 
 function sendNotification(username, phoneNumber, apiKey, storedReview) {
-    // setInterval(function(){
         request(`https://www.wanikani.com/api/user/${apiKey}/study-queue`, (err, res, body) => {
             var testStoredReview = storedReview;
             var parsedBody = JSON.parse(body);
@@ -68,39 +67,8 @@ function sendNotification(username, phoneNumber, apiKey, storedReview) {
                         console.log(updatedReview)
                     });
                 });
-                // Review.find(function(err, dbReview) {
-                //     var storedReview = dbReview[0].numberOfReviews;
-                //     console.log('Stored review:', storedReview);
-                //     console.log('Current # of reviews', numberOfReviews);
-                //     if(err) return console.error(err); // error handling
-                //     if(timeUntilReview === null) {
-                //         console.log('vacation mode is on - no notifications');
-                //     } else if(storedReview === undefined || storedReview >= numberOfReviews) {
-                //         console.log('dont send notification');
-                //     } else if(storedReview < numberOfReviews) {
-                //         console.log('send notification');
-                //         client.messages
-                //           .create({
-                //             to: `+1${phoneNumber}`,
-                //             from: config.twilioPhoneNumber,
-                //             body: `${WKusername}, you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
-                //           })
-                //           .then(message => console.log(message.sid));
-                //     } else {
-                //         console.log('wtf happened');
-                //     } 
-                    // Review.remove({}, function(err) {
-                    //     if(err) return console.error(err);
-                    // });
-                    
-                    // var review = new Review({numberOfReviews: numberOfReviews, now: now});
-                    // review.save(function (err, storedReview) { // store numberOfReviews to review object
-                    //     if(err) return console.error(err);                    
-                    // });
-                // });
             }
         });
-    // }, 60000); // for production, change this to 60000
 }
 
 exports.module = requestLoop;
