@@ -3,7 +3,7 @@
         <% if(user) { %> <!-- info only for logged in users -->
                 <p>Welcome <%=user.username%> to the WaniKani Review Notifier</p>
                 <!-- add information --> 
-                <form action="/account" method="POST" class="ui form">
+                <form action="/account?_method=PUT" method="POST" class="ui form">
                         <div class="field">
                                 <label>Email</label>
                                 <input type="text" name="username" placeholder="Email" value="<%=user.username%>">
