@@ -1,20 +1,12 @@
-<%-  include partials/header %> 
+<%-  include partials/header %>
         
         <% if(user) { %> <!-- info only for logged in users -->
-                <p>Welcome <%=user.username%> to the WaniKani Review Notifier</p>
+                <h1>Welcome <%=user.username%> to the WaniKani Review Notifier</h1>
                 <!-- add information --> 
                 <form action="/account?_method=PUT" method="POST" class="ui form">
                         <div class="field">
                                 <label>Email</label>
                                 <input type="text" name="username" placeholder="Email" value="<%=user.username%>">
-                        </div>
-                        <div class="field"> <!-- make toggle later -->
-                                <label>Receive SMS Notifications</label>
-                                <% if(user.receiveNotifications) { %>
-                                        <input type="checkbox" name="notification" checked>
-                                <% } else { %>
-                                        <input type="checkbox" name="notification">
-                                <% } %>
                         </div>
                         <div class="field">
                                 <label>API Key</label> <!-- what to do if u don't know --> 
@@ -24,14 +16,22 @@
                                 <label>Phone Number</label>
                                 <input type="tel" name="phoneNumber" placeholder="Phone Number" value="<%=user.phoneNumber%>">
                         </div>
+                        <div class="field inline"> <!-- make toggle later -->
+                                <label>Receive SMS Notifications</label>
+                                <% if(user.receiveNotifications) { %>
+                                        <input type="checkbox" name="notification" checked>
+                                <% } else { %>
+                                        <input type="checkbox" name="notification">
+                                <% } %>
+                        </div>
                         <button class="ui button" type="submit">Update Settings</button>
                 </form>
-                
-                <form action="/account?_method=DELETE" method="POST" class="ui form">
-                        <button class="ui button warning" type="submit">Delete Account</button>
+                <h1>DANGER AREA</h1>
+                <form action="/account?_method=DELETE" method="POST" class="ui form delete-margin">
+                        <button class="ui button negative" type="submit">Delete Account</button>
                 </form>
         <% } else { %> <!-- info only for not logged in users -->
-                <p>Login/Register to start!</p>
+                <h1>Login/Register to start!</h1>
         <% } %>
         
 <%- include partials/footer %>
