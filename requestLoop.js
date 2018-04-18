@@ -21,7 +21,6 @@ var requestLoop = setInterval(function(){
 
 function sendNotification(username, phoneNumber, apiKey, storedReview) {
         request(`https://www.wanikani.com/api/user/${apiKey}/study-queue`, (err, res, body) => {
-            var testStoredReview = storedReview;
             var parsedBody = JSON.parse(body);
             var WKusername = parsedBody.user_information.username;
             var nextReviewDate = parsedBody.requested_information.next_review_date; // comes back in seconds
