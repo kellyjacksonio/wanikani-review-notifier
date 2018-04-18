@@ -4,6 +4,7 @@ const   express         = require('express'),
         mongoose        = require('mongoose'),
         bodyParser      = require('body-parser'),
         LocalStrategy   = require('passport-local'),
+        methodOverride  = require('method-override'),
         config          = require('./config'),
         requestLoop     = require('./requestLoop'),
         User            = require('./models/user'),
@@ -12,6 +13,7 @@ const   express         = require('express'),
 app.use(bodyParser.urlencoded({extended: true}));       
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public/'));
+app.use(methodOverride("_method"));
 
 // PASSPORT CONFIGURATION
 app.use(require('express-session')({
@@ -78,21 +80,32 @@ app.get('/logout', (req, res) => {
 });
 
 // ACCOUNT SETTINGS ROUTES
-app.post('/account', (req, res) => {
-    var user = req.user;
-    console.log(user);
+app.put('/account', (req, res) => {
+    var receiveNotification;
+    
     if(req.body.notification === 'on') { // toggle notification logic
-        // change receiveNotification === true
-        console.log('receive notifications');
+        receiveNotification = true;
     } else {
-        // change receiveNotification === false
-        console.log('dont receive');
+        receiveNotification = false;
     }
     
-    // phone number
-    // email
-    // apiKey
-    res.redirect('/');
+    User.findOneAndUpdate(
+        {username: req.user.username},
+        {$set:
+            {
+                // username: req.body.username, --- if you change username, it logs you out
+                apiKey: req.body.apiKey,
+                phoneNumber: req.body.phoneNumber,
+                receiveNotifications: receiveNotification
+            },
+        }, {
+            returnNewDocument: true
+        },
+        (err, updatedReview) => {
+            if(err) return console.error(err);
+            console.log(updatedReview);
+        }
+    ).then(res.redirect('/'));
 });
 
 // FAQ page
