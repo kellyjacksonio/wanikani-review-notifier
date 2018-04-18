@@ -2,10 +2,10 @@
   "name": "wanikani-review-notifier",
   "version": "1.0.0",
   "description": "Informs you via either SMS text or email when your Wanikani Reviews are ready",
-  "main": "routes.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node routes.js"
+    "start": "node app.js"
   },
   "keywords": [
     "wanikani",
