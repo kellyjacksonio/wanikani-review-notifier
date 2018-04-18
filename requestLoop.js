@@ -26,25 +26,20 @@ function sendNotification(username, phoneNumber, apiKey, storedReview) {
             var nextReviewDate = parsedBody.requested_information.next_review_date; // comes back in seconds
             var numberOfReviews = parsedBody.requested_information.reviews_available;
             var now = Math.floor(Date.now() / 1000); // changes to seconds
-            var timeUntilReview = nextReviewDate - now;
+            var timeUntilReview = Math.floor((nextReviewDate - now) / 60);
             if(err) {
                 console.log(err);
             } else {
-                console.log('=====');
-                console.log('Your username:', WKusername);
-                console.log('Minutes until review:', Math.floor(timeUntilReview / 60));
+                console.log(`${WKusername} | ${timeUntilReview} min | Stored #: ${storedReview} | Current #: ${numberOfReviews}`);
                 
                 // determining whether to send notification logic
                 User.findOne({'username': username}, (err, user) => {
-                    console.log(`stored reviews for ${WKusername}: ${storedReview}`);
-                    console.log(`current # of reviews for ${WKusername}: ${numberOfReviews}`);
-                    
                     if(err) return console.error(err); // error handling
                     if(timeUntilReview === null) {
                         console.log(`vacation mode is on for ${WKusername} - no notification`);
-                    } else if(storedReview === undefined || storedReview >= numberOfReviews) {
+                    } else if(storedReview === undefined || storedReview >= numberOfReviews || !user.receiveNotifications) {
                         console.log(`don't send notification to ${WKusername}`);
-                    } else if(storedReview < numberOfReviews) {
+                    } else if(storedReview < numberOfReviews && user.receiveNotifications) {
                         console.log(`send notification to ${WKusername}`);
                         client.messages
                           .create({
@@ -63,7 +58,7 @@ function sendNotification(username, phoneNumber, apiKey, storedReview) {
                         {returnNewDocument: true},
                         (err, updatedReview) => {
                         if(err) return console.error(err);
-                        console.log(updatedReview)
+                        // console.log(updatedReview)
                     });
                 });
             }
