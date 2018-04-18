@@ -7,18 +7,20 @@ const   request     = require('request'),
 // connect to database
 mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
 
-User.find((err, user) => {
-    if(err) return console.error(err);
-    user.forEach((user) => {
-        if(user.receiveNotifications === true) {
-            requestLoop(user.username, user.phoneNumber, user.apiKey, user.storedReview);
-        }
+var requestLoop = setInterval(function(){
+    User.find((err, user) => {
+        if(err) return console.error(err);
+        user.forEach((user) => {
+            if(user.receiveNotifications === true) {
+                sendNotification(user.username, user.phoneNumber, user.apiKey, user.storedReview);
+            }
+        });
     });
-});
+}, 60000);
 
 
-function requestLoop(username, phoneNumber, apiKey, storedReview) {
-    setInterval(function(){
+function sendNotification(username, phoneNumber, apiKey, storedReview) {
+    // setInterval(function(){
         request(`https://www.wanikani.com/api/user/${apiKey}/study-queue`, (err, res, body) => {
             var testStoredReview = storedReview;
             var parsedBody = JSON.parse(body);
@@ -52,16 +54,18 @@ function requestLoop(username, phoneNumber, apiKey, storedReview) {
                             from: config.twilioPhoneNumber,
                             body: `${WKusername}, you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
                           })
-                          .then(message => console.log(message.sid));
+                          .then(message => console.log(`message sent to ${WKusername}`));
                     } else {
                         console.log(`notification error for ${username}`);
                     }
                     
                     User.findOneAndUpdate(
-                        {'username': username}, 
-                        {$set:{'storedReview': numberOfReviews}}, 
+                        {username: username}, 
+                        {$set:{storedReview: numberOfReviews}},
+                        {returnNewDocument: true},
                         (err, updatedReview) => {
                         if(err) return console.error(err);
+                        console.log(updatedReview)
                     });
                 });
                 // Review.find(function(err, dbReview) {
@@ -96,7 +100,7 @@ function requestLoop(username, phoneNumber, apiKey, storedReview) {
                 // });
             }
         });
-    }, 1000); // for production, change this to 60000
+    // }, 60000); // for production, change this to 60000
 }
 
 exports.module = requestLoop;
