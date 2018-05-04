@@ -18,10 +18,18 @@
                         </div>
                         <div class="field inline"> <!-- make toggle later -->
                                 <label>Receive SMS Notifications</label>
-                                <% if(user.receiveNotifications) { %>
-                                        <input type="checkbox" name="notification" checked>
+                                <% if(user.receiveText) { %>
+                                        <input type="checkbox" name="receiveText" checked>
                                 <% } else { %>
-                                        <input type="checkbox" name="notification">
+                                        <input type="checkbox" name="receiveText">
+                                <% } %>
+                        </div>
+                        <div class="field inline"> <!-- make toggle later -->
+                                <label>Receive Email Notifications</label>
+                                <% if(user.receiveEmail) { %>
+                                        <input type="checkbox" name="receiveEmail" checked>
+                                <% } else { %>
+                                        <input type="checkbox" name="receiveEmail">
                                 <% } %>
                         </div>
                         <button class="ui button" type="submit">Update Settings</button>
