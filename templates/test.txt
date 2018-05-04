@@ -1,0 +1,10 @@
+Hi {{username}},
+
+You have {{numberOfReviews}} reviews waiting for you in WaniKani.
+
+Go do them! http://www.wanikani.com
+
+Have a great day :)
+
+Change Account Settings:
+http://wanikani-review-notifier.herokuapp.com
