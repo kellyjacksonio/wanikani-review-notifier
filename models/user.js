@@ -26,7 +26,11 @@ var userSchema = new Schema({
         trim: true,
         // select: false - prevents from showing up in queries...but i think i want it to? 
     },
-    receiveNotifications: {
+    receiveEmail: {
+        type: Boolean,
+        default: true
+    },
+    receiveText: {
         type: Boolean,
         default: true
     },
