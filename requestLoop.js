@@ -21,15 +21,15 @@ var requestLoop = setInterval(function(){
     User.find((err, user) => {
         if(err) return console.error(err);
         user.forEach((user) => {
-            if(user.receiveNotifications === true) {
-                sendNotification(user.username, user.phoneNumber, user.apiKey, user.storedReview);
+            if(user.receiveEmail || user.receiveText) {
+                sendNotification(user.username, user.phoneNumber, user.apiKey, user.storedReview, user.receiveEmail, user.receiveText);
             }
         });
     });
-}, 6000); // default should be 60000
+}, 60000); // default should be 60000
 
 
-function sendNotification(username, phoneNumber, apiKey, storedReview) {
+function sendNotification(username, phoneNumber, apiKey, storedReview, receiveEmail, receiveText) {
         request(`https://www.wanikani.com/api/user/${apiKey}/study-queue`, (err, res, body) => {
             var testStoredReview = storedReview;
             var parsedBody = JSON.parse(body);
@@ -57,28 +57,29 @@ function sendNotification(username, phoneNumber, apiKey, storedReview) {
                         console.log(`don't send notification to ${WKusername}`);
                     } else if(storedReview < numberOfReviews) {
                         console.log(`send notification to ${WKusername}`);
-                        client.messages
-                          .create({
-                            to: `+1${phoneNumber}`,
-                            from: config.twilioPhoneNumber,
-                            body: `${WKusername}, you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
-                          })
-                          .then(message => console.log(`message sent to ${WKusername}`));
-                          
-                        // send email
-                        var person = {
-                            username: `${WKusername}`,
-                            numberOfReviews: `${numberOfReviews}`,
-                            email: `${username}`,
-                            subject: `${numberOfReviews} New Reviews!`,
-                        };
+                        if(receiveText) {
+                            client.messages
+                              .create({
+                                to: `+1${phoneNumber}`,
+                                from: config.twilioPhoneNumber,
+                                body: `${WKusername}, you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
+                              })
+                              .then(message => console.log(`text sent to ${WKusername}`));
+                        }
                         
-                        email('test', person, (err, result) => {
-                            if(err) return console.log(err);
-                            console.log('email sent');
-                            console.log(result);
-                            console.log('======');
-                        });
+                        if(receiveEmail) {
+                            var person = {
+                                username: `${WKusername}`,
+                                numberOfReviews: `${numberOfReviews}`,
+                                email: `${username}`,
+                                subject: `${numberOfReviews} New Reviews!`,
+                            };
+                            
+                            email('test', person, (err, result) => {
+                                if(err) return console.log(err);
+                                console.log(`email send to ${WKusername}`);
+                            });
+                        }
                     } else {
                         console.log(`notification error for ${username}`);
                     }
