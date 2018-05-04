@@ -81,12 +81,19 @@ app.get('/logout', (req, res) => {
 
 // ACCOUNT SETTINGS ROUTES
 app.put('/account', (req, res) => {
-    var receiveNotification;
+    var receiveEmail;
+    var receiveText;
     
-    if(req.body.notification === 'on') { // toggle notification logic
-        receiveNotification = true;
+    if(req.body.receiveText === 'on') { // toggle notification logic
+        receiveEmail = true;
     } else {
-        receiveNotification = false;
+        receiveEmail = false;
+    }
+    
+    if(req.body.receiveEmail === 'on') {
+        receiveText = true;
+    } else {
+        receiveText = false;
     }
     
     User.findOneAndUpdate(
@@ -96,7 +103,8 @@ app.put('/account', (req, res) => {
                 // username: req.body.username, --- if you change username, it logs you out
                 apiKey: req.body.apiKey,
                 phoneNumber: req.body.phoneNumber,
-                receiveNotifications: receiveNotification
+                receiveText: receiveText,
+                receiveEmail: receiveEmail
             },
         }, {
             returnNewDocument: true
@@ -121,7 +129,7 @@ app.delete('/account', (req, res) => {
 
 // FAQ page
 app.get('/faq', (req, res) => {
-    res.send('future faq page');
+    res.render('faq', {user: req.user});
 });
 
 // MIDDLEWARE
