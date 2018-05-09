@@ -1,5 +1,5 @@
 /*=====================*/
-/* reusable components */
+/*     basic setup     */
 /*=====================*/
 
 body {
@@ -9,11 +9,21 @@ body {
     background-attachment: fixed;
     background-position: center;
     /*background-color: #fcfae5; */
+    box-sizing: border-box;
 }
 
 .container {
     padding: 0 10% 10% 10%;
 }
+
+::selection {
+    background-color: #fff696;
+    color: #000;
+}
+
+/*=====================*/
+/* reusable components */
+/*=====================*/
 
 form {
     padding: 0 30%;
@@ -33,11 +43,6 @@ a {
 
 .delete-margin {
     margin: 25px 0;
-}
-
-::selection {
-    background-color: #fff696;
-    color: #1EACFB;
 }
 
 /*=====================*/
@@ -97,4 +102,29 @@ a {
 
 .ui.button {
     background-color: #CEFD38;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    font-family: 'Helvetica Neue', 'Arial', sans-serif;
+    visibility: hidden;
+    width: 200px;
+    background-color: rgba(0,0,0,0.8);
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    line-height: 1.3em;
+ 
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext,
+.tooltip:active .tooltiptext{
+    visibility: visible;
 }
