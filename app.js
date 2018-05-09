@@ -5,6 +5,7 @@ const   express         = require('express'),
         bodyParser      = require('body-parser'),
         LocalStrategy   = require('passport-local'),
         methodOverride  = require('method-override'),
+        request         = require('request'),
         config          = require('./config'),
         requestLoop     = require('./requestLoop'),
         User            = require('./models/user'),
@@ -47,7 +48,33 @@ app.get('/register', (req, res) => {
 // handle sign up logic
 app.post('/register', (req, res) => {
     var newUser = new User({username: req.body.username, apiKey: req.body.apiKey, phoneNumber: req.body.phoneNumber});
-    // validation logic
+    // apiKey validation logic
+    if(req.body.apiKey.match((/[a-z]|[0-9]{32}/))) { // if it's 32 digits long
+        request(`https://www.wanikani.com/api/user/${req.body.apiKey}`, (err, response, body) => {
+            if(err) return console.log(err);
+            var parsedBody = JSON.parse(body);
+            if(parsedBody.user_information) {
+                console.log('valid api');
+            } else {
+                console.log('invalid api');
+                // figure out error handling logic
+            }
+        });
+    } else {
+        console.log('should be 32 num/digits');
+        // figure out error handling logic
+    }
+    
+    // email validation logic - username should be an email
+    if(req.body.username.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
+        console.log('valid email');
+    } else {
+        console.log('invalid email');
+        // figure out error handling logic
+    }
+    
+    // phone number validation logic
+    
     User.register(newUser, req.body.password, (err, user) => {
         if(err) {
             console.log(err);
