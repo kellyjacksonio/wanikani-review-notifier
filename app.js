@@ -34,8 +34,7 @@ mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.
 
 // ROUTES
 app.get('/', (req, res) => {
-    var user = req.user;
-    res.render('home', {user: user});
+    res.render('home', {user: req.user});
 });
 
 // AUTH ROUTES
@@ -51,7 +50,7 @@ app.post('/register', (req, res) => {
     User.register(newUser, req.body.password, (err, user) => {
         if(err) {
             console.log(err);
-            return res.render('register');
+            return res.render('register', {user: req.user});
         }
         passport.authenticate("local")(req, res, () => {
             console.log('user created ' + newUser.username);
