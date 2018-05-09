@@ -1,3 +1,16 @@
+/*=====================*/
+/* reusable components */
+/*=====================*/
+
+body {
+    font-family: 'Helvetica Neue', 'Arial', sans-serif;
+    color: #fff;
+    background-image: linear-gradient(rgba(239, 26, 160,1), rgba(254, 237, 97, 0.1)), url(https://images.pexels.com/photos/590478/pexels-photo-590478.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);
+    background-attachment: fixed;
+    background-position: center;
+    /*background-color: #fcfae5; */
+}
+
 .container {
     padding: 0 10%;
 }
@@ -10,6 +23,65 @@ h1 {
     text-align: center;
 }
 
+a {
+    color: #1EACFB;
+}
+
+.center {
+    text-align: center;
+}
+
 .delete-margin {
     margin: 25px 0;
+}
+
+::selection {
+    background-color: #fff696;
+    color: #1EACFB;
+}
+
+/*=====================*/
+/*       header        */
+/*=====================*/
+
+.ui.menu {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.ui.menu .item {
+    color: #fff;
+}
+
+/*=====================*/
+/*      home page      */
+/*=====================*/
+
+.home {
+}
+
+.hero {
+    position: absolute;
+    width: 1140px;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.hero-text {
+    text-align: left;
+    font-size: 600%;
+}
+
+
+/*=====================*/
+/*       forms         */
+/*=====================*/
+
+.ui.form .field>label {
+    color: #fff;
+}
+
+.ui.button {
+    background-color: #CEFD38;
 }
