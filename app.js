@@ -47,6 +47,7 @@ app.get('/register', (req, res) => {
 // handle sign up logic
 app.post('/register', (req, res) => {
     var newUser = new User({username: req.body.username, apiKey: req.body.apiKey, phoneNumber: req.body.phoneNumber});
+    // validation logic
     User.register(newUser, req.body.password, (err, user) => {
         if(err) {
             console.log(err);
