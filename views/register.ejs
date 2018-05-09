@@ -1,27 +1,27 @@
 <%- include partials/header %>
 
-<h1>Register</h1>
-
-<form action="/register" method="POST" class="ui form">
-    <div class="field">
-        <label>Email</label>
-        <input type="text" name="username" placeholder="Email"> 
-    </div>
-    <div class="field">
-        <label>API Key</label>
-        <!-- put in info on how to find API key -->
-        <input type="text" name="apiKey" placeholder="API Key">
-    </div>
-    <div class="field">
-        <label>Phone Number</label>
-        <!-- what are the parameters here? what country/etc. -->
-        <input type="tel" name="phoneNumber" placeholder="Phone Number">
-    </div>
-    <div class="field">
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Password">
-    </div>
-    <button class="ui button" type="submit">Register</button>
-</form>
+    <h1>Register</h1>
+    
+    <form action="/register" method="POST" class="ui form">
+        <div class="field">
+            <label>Email</label>
+            <input type="text" name="username" placeholder="Email"> 
+        </div>
+        <div class="field">
+            <label>API Key</label>
+            <!-- put in info on how to find API key -->
+            <input type="text" name="apiKey" placeholder="API Key">
+        </div>
+        <div class="field">
+            <label>Phone Number</label>
+            <!-- what are the parameters here? what country/etc. -->
+            <input type="tel" name="phoneNumber" placeholder="Phone Number">
+        </div>
+        <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Password">
+        </div>
+        <button class="ui button" type="submit">Register</button>
+    </form>
 
 <%- include partials/footer %>
