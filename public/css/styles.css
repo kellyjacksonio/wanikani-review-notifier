@@ -50,6 +50,7 @@ a {
 
 .ui.menu {
     background-color: rgba(0,0,0,0.1);
+    padding: 20px 5%;
 }
 
 .ui.menu .item {
