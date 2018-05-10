@@ -8,6 +8,7 @@ const   express         = require('express'),
         request         = require('request'),
         config          = require('./config'),
         requestLoop     = require('./requestLoop'),
+        isLoggedIn      = require('./middleware/isLoggedIn'),
         User            = require('./models/user'),
         port            = process.env.PORT || 8080;
 
@@ -35,7 +36,15 @@ mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.
 
 // ROUTES
 app.get('/', (req, res) => {
+    if(req.isAuthenticated()) {
+        return res.redirect('/account');
+    }
     res.render('home', {user: req.user});
+});
+
+app.get('/account', (req, res) => {
+    // add middleware
+    res.render('account', {user: req.user});
 });
 
 // AUTH ROUTES
@@ -158,14 +167,6 @@ app.delete('/account', (req, res) => {
 app.get('/faq', (req, res) => {
     res.render('faq', {user: req.user});
 });
-
-// MIDDLEWARE
-function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
-}
 
 app.listen(port, () => { // port set for heroku
     console.log('listening :)');
