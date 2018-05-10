@@ -1,0 +1,41 @@
+<%-  include partials/header %>
+        
+                <h1>Welcome <%=user.username%> to the WaniKani Review Notifier</h1>
+                <!-- add information --> 
+                <form action="/account?_method=PUT" method="POST" class="ui form">
+                        <div class="field">
+                                <label>Email</label>
+                                <input type="text" name="username" placeholder="Email" value="<%=user.username%>">
+                        </div>
+                        <div class="field">
+                                <label>API Key</label> <!-- what to do if u don't know --> 
+                                <input type="text" name="apiKey" placeholder="API Key" value="<%=user.apiKey%>">
+                        </div>
+                        <div class="field">
+                                <label>Phone Number</label>
+                                <input type="tel" name="phoneNumber" placeholder="Phone Number" value="<%=user.phoneNumber%>">
+                        </div>
+                        <div class="field inline"> <!-- make toggle later -->
+                                <label>Receive SMS Notifications</label>
+                                <% if(user.receiveText) { %>
+                                        <input type="checkbox" name="receiveText" checked>
+                                <% } else { %>
+                                        <input type="checkbox" name="receiveText">
+                                <% } %>
+                        </div>
+                        <div class="field inline"> <!-- make toggle later -->
+                                <label>Receive Email Notifications</label>
+                                <% if(user.receiveEmail) { %>
+                                        <input type="checkbox" name="receiveEmail" checked>
+                                <% } else { %>
+                                        <input type="checkbox" name="receiveEmail">
+                                <% } %>
+                        </div>
+                        <button class="ui button" type="submit">Update Settings</button>
+                </form>
+                <h1>DANGER AREA</h1>
+                <form action="/account?_method=DELETE" method="POST" class="ui form delete-margin">
+                        <button class="ui button negative" type="submit">Delete Account</button>
+                </form>
+        
+<%- include partials/footer %>
