@@ -31,7 +31,7 @@ passport.deserializeUser(User.deserializeUser());
 // make user a global variable
 
 // MONGOOSE 
-mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds135800.mlab.com:35800/wanikani-review-notifier`);
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_LINK}`);
 
 // ROUTES
 app.get('/', (req, res) => {

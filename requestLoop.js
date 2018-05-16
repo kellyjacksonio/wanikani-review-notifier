@@ -14,7 +14,7 @@ dir = path.resolve(dir);
 sendemail.set_template_directory(dir); // set template directory
 
 // connect to database
-mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds135800.mlab.com:35800/wanikani-review-notifier`);
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_LINK}`);
 
 var requestLoop = setInterval(function(){
     User.find((err, user) => {
