@@ -6,9 +6,8 @@ const   express         = require('express'),
         LocalStrategy   = require('passport-local'),
         methodOverride  = require('method-override'),
         request         = require('request'),
-        config          = require('./config'),
         requestLoop     = require('./requestLoop'),
-        isLoggedIn      = require('./middleware/isLoggedIn'),
+        // isLoggedIn      = require('./middleware/isLoggedIn'),
         User            = require('./models/user'),
         port            = process.env.PORT || 8080;
 
