@@ -2,10 +2,9 @@ const   path        = require('path'),
         request     = require('request'),
         mongoose    = require('mongoose'),
         User        = require('./models/user'),
-        config      = require('./config.js'),
-        config2     = path.resolve(__dirname+'/.env'), // load config file
-        env         = require('env2')(config2),
-        client      = require('twilio')(config.accountSid, config.authToken),
+        config     = path.resolve(__dirname+'/.env'), // load config file
+        env         = require('env2')(config),
+        client      = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN),
         sendemail   = require('sendemail'),
         email       = sendemail.email;
         
@@ -15,7 +14,7 @@ dir = path.resolve(dir);
 sendemail.set_template_directory(dir); // set template directory
 
 // connect to database
-mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@ds135800.mlab.com:35800/wanikani-review-notifier`);
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds135800.mlab.com:35800/wanikani-review-notifier`);
 
 var requestLoop = setInterval(function(){
     User.find((err, user) => {
@@ -31,7 +30,6 @@ var requestLoop = setInterval(function(){
 
 function sendNotification(username, phoneNumber, apiKey, storedReview, receiveEmail, receiveText) {
     request(`https://www.wanikani.com/api/user/${apiKey}/study-queue`, (err, res, body) => {
-        var testStoredReview = storedReview;
         var parsedBody = JSON.parse(body);
         var WKusername = parsedBody.user_information.username;
         var nextReviewDate = parsedBody.requested_information.next_review_date; // comes back in seconds
@@ -61,7 +59,7 @@ function sendNotification(username, phoneNumber, apiKey, storedReview, receiveEm
                         client.messages
                             .create({
                                 to: `+1${phoneNumber}`,
-                                from: config.twilioPhoneNumber,
+                                from: process.env.TWILIO_PHONE_NUMBER,
                                 body: `${WKusername}, you have ${numberOfReviews} reviews waiting for you in wanikani! http://www.wanikani.com`,
                             })
                             .then(message => console.log(`text sent to ${WKusername}`));
